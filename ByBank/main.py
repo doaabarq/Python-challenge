@@ -1,50 +1,62 @@
-#import modules
+# Set imports
 import os
 import csv
-#set path for file
-budget_data_csv = os.path.join('C:/Users/doaab/Desktop/Python-challenge/ByBank/budget_data.csv')
-#set the output of the text file
-text_path = "output.txt"
-#Set variables
-total_months = 0
-total_revenue = 0
-revenue = []
-previous_revenue = 0
-month_of_change = []
-revenue_change = 0
-greatest_decrease = ["", 9999999]
-greatest_increase = ["", 0]
-revenue_change_list = []
-revenue_average = 0
-#open the csv file
-with open('budget_data.csv') as csvfile:
-    csvreader = csv.DictReader(csvfile)
-    #Loop through to find total months
-for row in csvreader:
-     #Count the total of months
-      total_months += 1     
-     #Calculate the total revenue over the entire period
-      total_revenue  = total_revenue + int(row["Profit/Losses"])
-        #Calculate the average change in revenue between months over the entire period
-      revenue_change = float(row["Profit/Losses"])- previous_revenue
-      previous_revenue = float(row["Profit/Losses"])
-      revenue_change_list = revenue_change_list + [revenue_change]
-      month_of_change = [month_of_change] + [row["Date"]]
-        #The greatest increase in revenue (date and amount) over the entire period
-if revenue_change>greatest_increase[1]:
-            greatest_increase[1]= revenue_change
-            greatest_increase[0] = row['Date']
-        #The greatest decrease in revenue (date and amount) over the entire period
-if revenue_change<greatest_decrease[1]:
-            greatest_decrease[1]= revenue_change
-            greatest_decrease[0] = row['Date']
-            revenue_average = sum(revenue_change_list)/len(revenue_change_list)
-#write changes to csv
-with open(text_path, 'w') as file:
-    file.write("Financial Analysis\n")
-    file.write("---------------------\n")
-    file.write("Total Months: %d\n" % total_months)
-    file.write("Total Revenue: $%d\n" % total_revenue)
-    file.write("Average Revenue Change $%d\n" % revenue_average)
-    file.write("Greatest Increase in Revenue: %s ($%s)\n" % (greatest_increase[0], greatest_increase[1]))
-    file.write("Greatest Decrease in Revenue: %s ($%s)\n" % (greatest_decrease[0], greatest_decrease[1]))
+
+# Set path for CSV file 
+
+budgetData = os.path.join(".","Resources","budget_data.csv")
+
+
+# Open the CSV file
+with open(budgetData, newline="", encoding="utf-8") as csvfile:
+    csvreader = csv.reader(csvfile, delimiter=",")
+
+  # The total number of months included in the dataset 
+    next(csvreader)
+    data = list(csvreader)
+    row_count = len(data)
+
+  # The net total amount of "Profit/Losses" over the entire period
+    total = 0
+    for i in range(0, row_count): 
+        total = total + int(data[i][1]) 
+
+  # The average of the changes in "Profit/Losses" over the entire period    
+    num1 = 0
+    num2 = int(data[0][1])
+    diff = 0
+    difflist = list()
+    for j in range(1, row_count):
+        num1 = int(data[j][1])
+        diff = num1 - num2
+        difflist.append(diff)
+        num2 = int(data[j][1])
+    avgChange = round(sum(difflist)/len(difflist),2)
+
+  # The greatest increase in profits (date and amount) over the entire period *+1 accounts for difference in rows
+    maxDiff = max(difflist)
+    maxDiffPos = difflist.index(maxDiff)+1
+    
+  # The greatest decrease in losses (date and amount) over the entire period *+1 accounts for difference in rows
+    minDiff = min(difflist)
+    minDiffPos = difflist.index(minDiff)+1
+
+#  print the analysis to the terminal and export a text file with the results.
+  # Print the results to terminal
+    print("Financial Analysis")
+    print("----------------------------")
+    print(f"Total Months: {row_count}")
+    print(f"Total: ${total:,}")
+    print(f"Average Change: ${avgChange:,}")
+    print(f"Greatest Increase in Profits: {data[maxDiffPos][0]} (${maxDiff:,})")
+    print(f"Greatest Decrease in Profits: {data[minDiffPos][0]} (${minDiff:,})")
+
+  # Print the results to text file
+    print("Financial Analysis", file=open("PyBank.txt", "a"))
+    print("----------------------------", file=open("PyBank.txt", "a"))
+    print(f"Total Months: {row_count}", file=open("PyBank.txt", "a"))
+    print(f"Total: ${total:,}", file=open("PyBank.txt", "a"))
+    print(f"Average Change: ${avgChange:,}", file=open("PyBank.txt", "a"))
+    print(f"Greatest Increase in Profits: {data[maxDiffPos][0]} (${maxDiff:,})", file=open("PyBank.txt", "a"))
+    print(f"Greatest Decrease in Profits: {data[minDiffPos][0]} (${minDiff:,})", file=open("PyBank.txt", "a"))
+

@@ -1,17 +1,15 @@
-# In addition, your final script should both print the analysis to the terminal and export a text file with the results.
+
 
 import os
 import csv
 
-pollData = os.path.join(".","Resources","election_data.csv")
+pollData = os.path.join(r"C:\Users\doaab\Desktop\Python-challenge\bypoll\Resources\election_data.csv")
 #currentDirectory = os.getcwd()
 #print(currentDirectory)
 #print(pollData)
-
 # Open the CSV file
 with open(pollData, newline="", encoding="utf-8") as csvfile:
     csvreader = csv.reader(csvfile, delimiter=",")
-
   # The total number of votes cast (row count after the header)
     next(csvreader)
     data = list(csvreader)
